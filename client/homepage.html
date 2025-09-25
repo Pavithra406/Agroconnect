@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Herbal Delights - Home</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f8f4ff;
+      color: #2e003e;
+    }
+
+    header {
+      background-color: #6a0dad;
+      padding: 20px;
+      color: white;
+      text-align: center;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(rgba(106, 13, 173, 0.7), rgba(106, 13, 173, 0.7)), url('logo.jpg') no-repeat center center/cover;
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 3em;
+      background: rgba(255, 255, 255, 0.2);
+      display: inline-block;
+      padding: 15px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(106, 13, 173, 0.4);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      padding: 40px;
+    }
+
+    .card {
+      background-color: #f1e5ff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(106, 13, 173, 0.2);
+      overflow: hidden;
+      text-align: center;
+      padding-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card h3 {
+      margin: 15px 0 5px;
+      color: #4b0082;
+    }
+
+    .card p {
+      font-weight: bold;
+      color: #6a0dad;
+      margin-bottom: 10px;
+    }
+
+    .card button {
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+
+    .card button:hover {
+      background-color: #4b0082;
+    }
+
+    footer {
+      background-color: #6a0dad;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Herbal Delights</h1>
+  <p>Natural Teas & Healthy Snacks</p>
+</header>
+
+<section class="hero">
+  <h1>Welcome to a Sip of Nature</h1>
+</section>
+
+<section class="gallery">
+  <div class="card">
+    <img src="shop/img/avarampo.jpg" alt="Avarampoo Vadai" />
+    <h3>Avarampoo Vadai</h3>
+    <p>₹40 per pack</p>
+    <button onclick="window.location.href='login.html'">Order Now</button>
+
+  </div>
+  <div class="card">
+    <img src="shop/img/banana.jpg" alt="Banana Flower Vadai" />
+    <h3>Banana Flower Vadai</h3>
+    <p>₹45 per pack</p>
+    <button onclick="window.location.href='login.html'">Order Now</button>
+
+  </div>
+  <div class="card">
+    <img src="shop/img/hibstea.jpg" alt="Hibiscus Tea" />
+    <h3>Hibiscus Tea</h3>
+    <p>₹30 per cup</p>
+    <button onclick="window.location.href='login.html'">Order Now</button>
+
+  </div>
+  <div class="card">
+    <img src="shop/img/sangutea.jpg" alt="Blue Pea Tea" />
+    <h3>Blue Pea Tea</h3>
+    <p>₹35 per cup</p>
+   <button onclick="window.location.href='login.html'">Order Now</button>
+
+  </div>
+  <div class="card">
+    <img src="shop/img/tea yekkow.jpg" alt="Yellow Herbal Tea" />
+    <h3>Yellow Herbal Tea</h3>
+    <p>₹30 per cup</p>
+  <button onclick="window.location.href='login.html'">Order Now</button>
+
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Herbal Delights | Crafted with ♥ by Pavithra</p>
+</footer>
+
+</body>
+</html>
+
+</html>

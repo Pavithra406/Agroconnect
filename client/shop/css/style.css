@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Margarine&family=Roboto:ital,wght@0,100..900;1,100..900&family=Satisfy&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root{
+     --ff-primary:"Roboto",snas-serif;
+     --ff-secondary:"Inter",sans-serif;
+     --ff-design:"Satisfy",cursive;
+     --ff-brand:"Margarine",sans-serif;
+     --clr-white:#fff;
+     --clr-dark:#333;
+     --clr-grey-1:#102a42;
+     --clr-grey-2:#617d98;
+     --clr-grey-3:#f1f5f8;
+     --clr-primary:#785359;
+     --clr-primary-light:#f04660;
+     --clr-secondary:#49e996;
+}
+
+
+

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Details</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f4ff;
+      padding: 40px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(106, 13, 173, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #6a0dad;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #4b0082;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Customer Details</h2>
+  <!-- ✅ Added 'id' and 'name' attributes for JS and backend -->
+  <form id="customerForm">
+    <input type="text" name="fullName" placeholder="Full Name" required />
+    <input type="text" name="phoneNumber" placeholder="Phone Number" required />
+    <input type="email" name="email" placeholder="Email Address" required />
+    <input type="text" name="snacks" placeholder="Natural Teas & Healthy Snacks" required />
+    <textarea name="address" rows="4" placeholder="Delivery Address" required></textarea>
+    <button type="submit">Confirm</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("customerForm").addEventListener("submit", async function(e) {
+    e.preventDefault(); // prevent page refresh
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    try {
+      const res = await fetch("http://localhost:5000/add-customer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const msg = await res.text();
+      alert(msg);
+      this.reset(); // clear form after success
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error saving customer details");
+    }
+  });
+</script>
+
+</body>
+</html>
