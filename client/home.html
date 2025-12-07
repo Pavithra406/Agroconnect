@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroConnect - Home</title>
+
+  <!-- ✅ Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url('https://images5.alphacoders.com/544/thumb-1920-544042.jpg') no-repeat center center/cover;
+      height: 100vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 🌾 Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 40px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      backdrop-filter: blur(5px);
+      z-index: 10;
+    }
+
+    /* 🌱 Logo + Title (LEFT SIDE) */
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-section img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .logo-section h1 {
+      font-size: 24px;
+      color: #fff;
+    }
+
+    /* 🌿 Right Side Icons */
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-icons i {
+      font-size: 22px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .nav-icons i:hover {
+      color: #c8e6c9;
+    }
+
+    /* Tooltip text */
+    .nav-icons i::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .nav-icons i:hover::after {
+      opacity: 1;
+    }
+
+    /* 🌻 Logout Button */
+    .logout-btn {
+      background: #d32f2f;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .logout-btn:hover {
+      background: #b71c1c;
+    }
+
+    /* 🌿 Seller Dashboard Icon Special Styling */
+    .seller-icon {
+      color: #aed581; /* light green */
+      font-size: 24px; /* slightly bigger */
+      transition: transform 0.3s, color 0.3s;
+    }
+
+    .seller-icon:hover {
+      color: #7cb342; /* darker green */
+      transform: scale(1.2);
+    }
+
+    /* 🌼 Main Content */
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 80px;
+    }
+
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(3, 200px);
+      gap: 30px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+    }
+
+    .btn {
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      padding: 20px 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.3s, background 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn i {
+      font-size: 32px;
+    }
+
+    .btn:hover {
+      background: #1b5e20;
+      transform: translateY(-5px);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+    }
+
+    @media (max-width: 768px) {
+      .button-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 30px;
+      }
+
+      .navbar {
+        padding: 15px 20px;
+      }
+
+      .logo-section h1 {
+        font-size: 18px;
+      }
+
+      .nav-icons {
+        gap: 15px;
+      }
+
+      .nav-icons i {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🌾 Navbar -->
+  <div class="navbar">
+    <!-- LEFT: Logo and AgroConnect -->
+    <div class="logo-section">
+      <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2909/2909765.png'" alt="AgroConnect Logo">
+      <h1>AgroConnect</h1>
+    </div>
+
+    <!-- RIGHT: Profile, Cart, Track Orders, Seller Dashboard, Logout -->
+    <div class="nav-icons">
+      <!-- Profile Icon -->
+      <i class="fas fa-user" title="Profile" onclick="goToPage('profile.html')"></i>
+
+      <!-- Cart Icon -->
+      <i class="fas fa-shopping-cart" title="Cart" onclick="goToPage('cart.html')"></i>
+
+      <!-- Seller Dashboard Icon -->
+      <i class="fas fa-store seller-icon" title="Seller Dashboard" onclick="goToPage('seller-dashboard.html')"></i>
+
+      <!-- Track Orders Icon -->
+      <i class="fas fa-truck-fast" title="Track Orders" onclick="goToPage('track.html')"></i>
+
+      
+      
+
+      <!-- Logout Button -->
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- 🌻 Main Buttons - 3 Options Only -->
+  <div class="main">
+    <div class="button-container">
+      <button class="btn" onclick="location.href='sell.html'">
+        <i class="fas fa-hand-holding-dollar"></i>
+        Sell Products
+      </button>
+      
+      <button class="btn" onclick="location.href='buy.html'">
+        <i class="fas fa-shopping-bag"></i>
+        Buy Products
+      </button>
+      
+      <button class="btn" onclick="location.href='market.html'">
+        <i class="fas fa-chart-line"></i>
+        Market Price
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      if(confirm("Are you sure you want to logout?")) {
+        alert("You have logged out successfully!");
+        window.location.href = "index.html";
+      }
+    }
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+  </script>
+</body>
+</html>

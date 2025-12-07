@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AgroConnect - Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* Reset defaults */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://wallpaperaccess.com/full/1660071.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-section img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .logo-section h1 {
+      font-size: 22px;
+      color: #2e7d32;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-actions button, .nav-actions i {
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: #2e7d32;
+      transition: 0.3s;
+    }
+
+    .nav-actions i:hover {
+      color: #1b5e20;
+      transform: scale(1.1);
+    }
+
+    .logout-btn {
+      background: #2e7d32;
+      color: white;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #1b5e20;
+    }
+
+    /* ===== PROFILE CARD ===== */
+    .profile-container {
+      margin-top: 90px; /* leave space for navbar */
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .profile-container:hover {
+      transform: translateY(-5px);
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 4px solid #2e7d32;
+    }
+
+    h2 {
+      color: #2e7d32;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 8px 0;
+      color: #333;
+    }
+
+    #msg {
+      margin-top: 12px;
+      color: red;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <div class="navbar">
+    <div class="logo-section">
+      <img src="logo.png" alt="Logo">
+      <h1>AgroConnect</h1>
+    </div>
+    <div class="nav-actions">
+      <i class="fas fa-home" title="Home" onclick="goHome()"></i>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE CARD ===== -->
+  <div class="profile-container">
+    <h2>My Profile</h2>
+    <img id="profileImage" src="default.png" alt="Profile Image"/>
+    <p><strong>Name:</strong> <span id="fullname">-</span></p>
+    <p><strong>Email:</strong> <span id="email">-</span></p>
+    <p><strong>Phone:</strong> <span id="phone">-</span></p>
+    <p><strong>Address:</strong> <span id="address">-</span></p>
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    // ✅ Load profile data
+    async function loadProfile() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        document.getElementById("msg").innerText = "You are not logged in. Please login.";
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/profile", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
+
+        if (res.ok && data.user) {
+          const user = data.user;
+          document.getElementById("fullname").innerText = user.fullname || "-";
+          document.getElementById("email").innerText = user.email || "-";
+          document.getElementById("phone").innerText = user.phone || "-";
+          document.getElementById("address").innerText = user.address || "-";
+          document.getElementById("profileImage").src = user.profile_image || "default.png";
+        } else {
+          document.getElementById("msg").innerText = data.message || "Failed to load profile. Please login again.";
+        }
+      } catch (err) {
+        console.error("Profile load error:", err);
+        document.getElementById("msg").innerText = "Server error. Please try again.";
+      }
+    }
+
+    function goHome() {
+      window.location.href = "home.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      alert("Logged out successfully!");
+      window.location.href = "index.html";
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

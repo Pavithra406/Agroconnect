@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroConnect - Sell Organic Fertilizer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif;}
+    body {
+      background:url('https://img.freepik.com/free-photo/hand-holding-soil-plant_23-2147896770.jpg') no-repeat center center/cover;
+      min-height:100vh; color:#333; display:flex; flex-direction:column;
+    }
+    .navbar {
+      display:flex; justify-content:space-between; align-items:center;
+      background:rgba(0,0,0,0.6); padding:15px 40px; position:fixed; top:0; left:0;
+      width:100%; backdrop-filter:blur(5px); z-index:10;
+    }
+    .logo-section {display:flex; align-items:center; gap:10px;}
+    .logo-section img {width:45px; height:45px; border-radius:50%; object-fit:cover;}
+    .logo-section h1 {font-size:24px; color:#fff;}
+    .nav-icons {display:flex; align-items:center; gap:25px;}
+    .nav-icons i {font-size:22px; color:#fff; cursor:pointer; transition:0.3s;}
+    .nav-icons i:hover {color:#a5d6a7;}
+    .logout-btn {
+      background:#2e7d32; border:none; padding:8px 15px; border-radius:8px;
+      color:white; font-weight:bold; cursor:pointer; transition:background 0.3s;
+      display:flex; align-items:center; gap:5px;
+    }
+    .logout-btn:hover {background:#1b5e20;}
+    .main {
+      flex:1; display:flex; flex-direction:column;
+      padding:100px 40px 40px; max-width:1200px; margin:0 auto; width:100%;
+    }
+    .page-header {text-align:center; margin-bottom:30px; color:white; text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
+    .page-header h2 {font-size:32px; margin-bottom:10px;}
+    .content-container {display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-top:20px;}
+    .form-container, .products-container {
+      background:rgba(255,255,255,0.9); padding:30px; border-radius:15px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.2);
+    }
+    .form-container h3, .products-container h3 {color:#2e7d32; text-align:center; margin-bottom:20px;}
+    .form-group {margin-bottom:20px;}
+    .form-group label {display:block; margin-bottom:8px; font-weight:600; color:#2e7d32a3;}
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:12px 15px; border:1px solid #ddd; border-radius:8px; font-size:16px;
+    }
+    .submit-btn {
+      background:#43a047; color:white; border:none; padding:15px 30px;
+      border-radius:8px; font-size:18px; cursor:pointer; width:100%; transition:0.3s;
+    }
+    .submit-btn:hover {background:#2e7d32;}
+    .product-list {display:grid; gap:20px;}
+    .product-card {
+      background:white; border-radius:10px; padding:20px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.1); border-left:5px solid #43a047; position:relative;
+    }
+    .product-card img {width:100%; height:200px; object-fit:cover; border-radius:8px; margin-bottom:10px;}
+    .delete-btn {
+      background:#e53935; color:white; border:none; padding:8px 12px; border-radius:6px;
+      cursor:pointer; float:right; transition:0.3s;
+    }
+    .delete-btn:hover {background:#b71c1c;}
+    .empty-state {text-align:center; padding:30px; color:#666;}
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-section">
+      <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/619/619034.png'" alt="Logo">
+      <h1>AgroConnect</h1>
+    </div>
+   <div class="nav-icons">
+      <i class="fas fa-money-bill-wave" title="sell" onclick="goToPage('sell.html')"></i>
+      <i class="fas fa-shopping-cart" title="Cart" onclick="goToPage('cart.html')"></i>
+      <i class="fas fa-truck" title="Track Orders" onclick="goToPage('track.html')"></i>
+      <i class="fas fa-home" title="Home" onclick="goToPage('home.html')"></i>
+      <i class="fas fa-user" title="Profile" onclick="goToPage('profile.html')"></i>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h2>Sell Organic Fertilizer</h2>
+      <p>List your organic fertilizers on the AgroConnect marketplace</p>
+    </div>
+
+    <div class="content-container">
+      <!-- Fertilizer Form -->
+      <div class="form-container">
+        <h3>Add New Fertilizer Listing</h3>
+        <form id="fertilizerForm" enctype="multipart/form-data">
+          <div class="form-group"><label>Fertilizer Type</label><input type="text" id="type" name="type" placeholder="e.g., Compost, Vermicompost, Cow Manure" required></div>
+          <div class="form-group"><label>Nutrient Content (N-P-K ratio)</label><input type="text" id="nutrients" name="nutrients" placeholder="e.g., 5-5-5"></div>
+          <div class="form-group"><label>Quantity (kg)</label><input type="number" id="quantity" name="quantity" min="1" required></div>
+          <div class="form-group"><label>Price (₹)</label><input type="number" step="0.01" id="price" name="price" required></div>
+          <div class="form-group">
+            <label>Quality</label>
+            <select id="quality" name="quality" required>
+              <option value="">Select Quality</option>
+              <option value="Excellent">Excellent</option>
+              <option value="Good">Good</option>
+              <option value="Average">Average</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Seller Address</label><input type="text" id="address" name="seller_address" placeholder="Enter your address" required></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" name="seller_phone" placeholder="Enter your contact number" required></div>
+          <div class="form-group"><label>Description</label><textarea id="description" name="description" placeholder="Describe your fertilizer..."></textarea></div>
+          <div class="form-group"><label>Image</label><input type="file" id="image" name="image" accept="image/*"></div>
+          <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> Add Fertilizer Listing</button>
+        </form>
+      </div>
+
+      <!-- Fertilizer Listings -->
+      <div class="products-container">
+        <h3>Your Fertilizer Listings</h3>
+        <div class="product-list" id="productList">
+          <div class="empty-state" id="emptyState">
+            <i class="fas fa-seedling fa-3x"></i>
+            <p>No fertilizer listings added yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const API_BASE_URL = 'http://127.0.0.1:5000/api/fertilizers';
+  const form = document.getElementById('fertilizerForm');
+  const list = document.getElementById('productList');
+  const emptyState = document.getElementById('emptyState');
+
+  document.addEventListener('DOMContentLoaded', loadFertilizers);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch(API_BASE_URL, { method: 'POST', body: formData });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } 
+      catch { console.error('Non-JSON response:', text); alert('⚠️ Server returned invalid JSON.'); return; }
+
+      if (res.ok) {
+        alert('✅ Fertilizer listing added successfully!');
+        form.reset();
+        loadFertilizers();
+      } else {
+        alert('❌ Failed: ' + (data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('⚠️ Network error: ' + err.message);
+    }
+  });
+
+  async function loadFertilizers() {
+    try {
+      const res = await fetch(API_BASE_URL);
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } 
+      catch { console.error('❌ Invalid JSON response from server:', text); return; }
+      displayFertilizers(Array.isArray(data) ? data : data.data || []);
+    } catch (err) {
+      console.error('Error loading fertilizers:', err);
+    }
+  }
+
+  function displayFertilizers(fertilizers) {
+    list.innerHTML = '';
+    if (!fertilizers.length) {
+      emptyState.style.display = 'block';
+      list.appendChild(emptyState);
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    fertilizers.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${f.image || 'https://cdn-icons-png.flaticon.com/512/7667/7667730.png'}" alt="${f.type}">
+        <h4>${f.type} - ₹${f.price}</h4>
+        <p><b>Quantity:</b> ${f.quantity} kg</p>
+        <p><b>Quality:</b> ${f.quality}</p>
+        <p><b>Nutrients:</b> ${f.nutrients || 'N/A'}</p>
+        <p><b>Address:</b> ${f.seller_address || 'N/A'}</p>
+        <p><b>Phone:</b> ${f.seller_phone || 'N/A'}</p>
+        <p>${f.description || ''}</p>
+        <button class="delete-btn" onclick="deleteFertilizer(${f.id})"><i class="fas fa-trash"></i> Delete</button>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  async function deleteFertilizer(id) {
+    if (!confirm('Are you sure you want to delete this fertilizer listing?')) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/${id}`, { method: 'DELETE' });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } 
+      catch { console.error('Invalid JSON from delete:', text); return; }
+      if (res.ok) {
+        alert('🗑️ Fertilizer deleted successfully');
+        loadFertilizers();
+      } else {
+        alert('Failed to delete: ' + (data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
+    }
+  }
+
+  function logout() { alert('Logged out!'); window.location.href = 'index.html'; }
+  function goToPage(p) { window.location.href = p; }
+  </script>
+</body>
+</html>

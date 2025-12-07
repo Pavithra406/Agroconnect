@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroConnect - Fresh Fruits</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://wallpaperaccess.com/full/803498.jpg') no-repeat center center/cover;
+      margin: 0;
+      padding: 0;
+      background-attachment: fixed;
+      color: #d84315;
+    }
+
+    /* 🍎 Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(239, 108, 0, 0.9);
+      padding: 12px 40px;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(3px);
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+    .navbar img {
+      width: 45px;
+      height: 45px;
+      margin-right: 12px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .navbar h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+    .nav-icons i {
+      margin-left: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .nav-icons i:hover {
+      color: #ffcc80;
+    }
+
+    /* 🍊 Content */
+    .container {
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #fff;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    /* 🍓 Product Cards */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    .product-card {
+      background: rgba(255, 255, 255, 0.93);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      transition: 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .product-card h3 {
+      color: #ef6c00;
+      margin: 10px 0;
+    }
+    .product-card p {
+      color: #333;
+      margin: 5px 0;
+    }
+
+    /* 🛒 Buttons */
+    .buy-btn, .now-btn {
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      font-weight: 600;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .buy-btn {
+      background: #ef6c00;
+      color: white;
+    }
+    .buy-btn:hover {
+      background: #e65100;
+    }
+
+    .now-btn {
+      background: #d84315;
+      color: white;
+    }
+    .now-btn:hover {
+      background: #bf360c;
+    }
+
+    .empty {
+      text-align: center;
+      color: #fff;
+      margin-top: 50px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- 🍎 Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="logo.png" alt="AgroConnect Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/415/415733.png'">
+      <h1>AgroConnect</h1>
+    </div>
+    <div class="nav-icons">
+      <i class="fas fa-money-bill-wave" title="Buy" onclick="goToPage('buy.html')"></i>
+      <i class="fas fa-shopping-cart" onclick="goToPage('cart.html')" title="Cart"></i>
+      <i class="fas fa-home" onclick="goToPage('home.html')" title="Home"></i>
+      <i class="fas fa-user" onclick="goToPage('profile.html')" title="Profile"></i>
+     
+    </div>
+  </div>
+
+  <!-- 🍇 Main Content -->
+  <div class="container">
+    <h2>Fresh Fruits Available for Purchase</h2>
+    <div id="productGrid" class="product-grid"></div>
+    <p id="empty" class="empty" style="display:none;">No fruits available at the moment.</p>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://127.0.0.1:5000/api/fruits';
+    const grid = document.getElementById('productGrid');
+    const empty = document.getElementById('empty');
+
+    document.addEventListener('DOMContentLoaded', loadFruits);
+
+    // 🍌 Load Fruits
+    async function loadFruits() {
+      try {
+        const res = await fetch(API_BASE_URL);
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); } 
+        catch { console.error('Invalid JSON:', text); return; }
+
+        const fruits = Array.isArray(data) ? data : data.data || [];
+        displayFruits(fruits);
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+
+    // 🍎 Display fruits dynamically
+    function displayFruits(fruits) {
+      grid.innerHTML = '';
+      if (!fruits.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      fruits.forEach(f => {
+        const sellerPhone =
+          f.seller_phone ||
+          f.phone ||
+          f.contact ||
+          f.sellerContact ||
+          f.mobile ||
+          "Not available";
+
+        const sellerAddress =
+          f.seller_address ||
+          f.address ||
+          f.location ||
+          "Not specified";
+
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${f.image || 'https://cdn-icons-png.flaticon.com/512/415/415733.png'}" alt="${f.name}">
+          <h3>${f.name}</h3>
+          <p><b>Type:</b> ${f.type || 'N/A'}</p>
+          <p><b>Price:</b> ₹${f.price}/kg</p>
+          <p><b>Quality:</b> ${f.quality || 'Fresh'}</p>
+          <p><b>Seller:</b> ${sellerAddress}</p>
+          <p><b>Phone:</b> ${sellerPhone}</p>
+          <button class="buy-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+          <button class="now-btn"><i class="fas fa-bolt"></i> Buy Now</button>
+        `;
+
+        // 🛒 Add to Cart
+        card.querySelector('.buy-btn').addEventListener('click', () => {
+          addToCart({
+            id: f.id,
+            name: f.name,
+            price: f.price,
+            image: f.image || 'https://cdn-icons-png.flaticon.com/512/415/415733.png',
+            category: 'Fruits'
+          });
+        });
+
+        // ⚡ Buy Now — Redirect to detail page
+        card.querySelector('.now-btn').addEventListener('click', () => {
+          const singleItem = [{
+            id: f.id,
+            name: f.name,
+            price: f.price,
+            image: f.image || 'https://cdn-icons-png.flaticon.com/512/415/415733.png',
+            category: 'Fruits',
+            quantity: 1
+          }];
+          localStorage.setItem("cart", JSON.stringify(singleItem));
+          window.location.href = "detail.html";
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    // 🛒 Add to Cart
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const uniqueId = product.name + "_" + product.category + "_" + Date.now();
+      cart.push({ ...product, id: uniqueId, quantity: 1 });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert(product.name + " added to cart!");
+    }
+
+    // 🧭 Navigation Function
+    function goToPage(page) {
+      window.location.href = page;
+    }
+  </script>
+
+</body>
+</html>

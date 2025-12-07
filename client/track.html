@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Orders</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* Reset */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: url('https://images2.alphacoders.com/605/605533.jpg') no-repeat center center/cover;
+    min-height: 100vh;
+    position: relative;
+    color: #2e7d32;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 0;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 15px 30px;
+    background: rgba(255,255,255,0.9); /* White transparent layer */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-section img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .logo-section h1 {
+    font-size: 22px;
+    color: #2e7d32;
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .nav-icons i {
+    font-size: 20px;
+    cursor: pointer;
+    color: #2e7d32;
+    transition: 0.3s;
+  }
+
+  .nav-icons i:hover {
+    color: #1b5e20;
+    transform: scale(1.1);
+  }
+
+  .logout-btn {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .logout-btn:hover {
+    background: #1b5e20;
+  }
+
+  /* Container */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.95);
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #2e7d32;
+    letter-spacing: 1px;
+  }
+
+  .search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  input[type="text"] {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    flex: 1 1 250px;
+  }
+
+  button.search-btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #2e7d32;
+    color: white;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  button.search-btn:hover {
+    background: #1b5e20;
+    transform: translateY(-2px);
+  }
+
+  .order-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    background: #f9f9f9;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+
+  .order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+  }
+
+  .order-card h3 {
+    color: #1b5e20;
+    margin-bottom: 10px;
+  }
+
+  .order-card p, .order-card ul {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+
+  .order-card ul {
+    padding-left: 20px;
+  }
+
+  .order-card img {
+    max-width: 200px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 2px solid #2e7d32;
+  }
+
+  .status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .status.Pending { background: #ff9800; }
+  .status.Accepted { background: #4caf50; }
+  .status.Cancelled { background: #c62828; }
+
+  @media(max-width: 768px){
+    input[type="text"]{ width: 100%; }
+    button.search-btn { width: 100%; }
+    header { flex-direction: column; gap: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo-section">
+    <img src="logo.png" alt="Logo">
+    <h1>AgroConnect</h1>
+  </div>
+  <div class="nav-icons">
+     <i class="fas fa-shopping-cart" title="Cart" onclick="window.location.href='cart.html'"></i>
+    <i class="fas fa-home" title="Home" onclick="window.location.href='home.html'"></i>
+    <i class="fas fa-user-circle" title="Profile" onclick="window.location.href='profile.html'"></i>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+  <h2>Track Your Orders</h2>
+  <div class="search-bar">
+    <input type="text" id="userInput" placeholder="Email or Phone">
+    <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search Orders</button>
+  </div>
+  <div id="resultsDiv"></div>
+</div>
+
+<script>
+function logout() {
+  localStorage.removeItem('token'); 
+  window.location.href = 'index.html';
+}
+
+const searchBtn = document.getElementById('searchBtn');
+const userInput = document.getElementById('userInput');
+const resultsDiv = document.getElementById('resultsDiv');
+
+searchBtn.addEventListener('click', async () => {
+  const query = userInput.value.trim();
+  if (!query) { 
+    alert('Enter email or phone'); 
+    return; 
+  }
+
+  resultsDiv.innerHTML = '<p style="text-align:center;">Loading orders...</p>';
+
+  try {
+    const res = await fetch('http://localhost:5000/api/orders');
+    if (!res.ok) throw new Error('Network error');
+    const orders = await res.json();
+
+    const filtered = orders.filter(o => o.email === query || o.phone === query);
+
+    resultsDiv.innerHTML = '';
+    if (!filtered.length) {
+      resultsDiv.innerHTML = '<p style="text-align:center; font-size:18px; margin-top:20px;">No orders found.</p>';
+      return;
+    }
+
+    filtered.forEach(order => {
+      let cartItems = [];
+      try {
+        cartItems = typeof order.cart === 'string' ? JSON.parse(order.cart) : order.cart;
+      } catch {
+        cartItems = [];
+      }
+
+      const div = document.createElement('div');
+      div.className = 'order-card';
+      const status = order.status || 'Pending';
+      div.innerHTML = `
+        <h3>Order #${order.id}</h3>
+        <p><b>Name:</b> ${order.name}</p>
+        <p><b>Email:</b> ${order.email}</p>
+        <p><b>Phone:</b> ${order.phone}</p>
+        <p><b>Address:</b> ${order.address}</p>
+        <p><b>Payment Method:</b> ${order.paymentMethod}</p>
+        <p><b>Status:</b> <span class="status ${status}">${status}</span></p>
+        ${order.status === 'Accepted' && order.deliveryDate 
+          ? `<p><b>Expected Delivery:</b> ${order.deliveryDate}</p>` 
+          : ''}
+        <h4>Items:</h4>
+        <ul>${cartItems.map(item => `<li>${item.name} × ${item.quantity} - ₹${(item.price * item.quantity).toFixed(2)}</li>`).join('')}</ul>
+        ${order.paymentMethod === 'gpay' && order.transactionImage 
+          ? `<h4>Transaction Proof:</h4><img src="${order.transactionImage}" alt="Transaction Proof">` 
+          : ''}
+      `;
+      resultsDiv.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error(err);
+    resultsDiv.innerHTML = '<p style="text-align:center;">❌ Failed to load orders.</p>';
+  }
+});
+</script>
+
+</body>
+</html>

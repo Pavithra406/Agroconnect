@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroConnect - Checkout</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body {
+  font-family: Poppins, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url('https://cdn.pixabay.com/photo/2024/03/22/09/05/farm-8649277_1280.jpg') no-repeat center center/cover;
+  min-height: 100vh;
+}
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px 40px; background: rgba(255,255,255,0.9);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky; top: 0;
+}
+.logo-section { display: flex; align-items: center; gap: 10px; }
+.logo-section img { width: 40px; height: 40px; border-radius: 50%; }
+.logo-section h1 { font-size: 22px; color: #2e7d32; margin: 0; font-weight: 700; }
+.nav-icons { display: flex; align-items: center; gap: 15px; }
+.nav-icons i { font-size: 20px; cursor: pointer; color: #2e7d32; transition: 0.3s; }
+.nav-icons i:hover { color: #1b5e20; transform: scale(1.1); }
+.logout-btn { background: #2e7d32; color: white; border: none; padding: 7px 12px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+.logout-btn:hover { background: #1b5e20; }
+.container {
+  max-width: 700px; margin: 40px auto; background: white;
+  padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+h2 { text-align: center; color: #2e7d32; }
+form { display: flex; flex-direction: column; gap: 10px; }
+input, textarea, button { padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; }
+button { cursor: pointer; font-weight: 600; color: white; border: none; transition: 0.3s; }
+#codBtn { background: #2e7d32; } 
+#codBtn:hover { background: #1b5e20; }
+#gpayBtn { background: #000; } 
+#gpayBtn:hover { background: #333; }
+.cart-summary { margin-top: 15px; border-top: 1px solid #2e7d32; padding-top: 10px; }
+.cart-summary-item { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+.cart-summary-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+
+/* QR Section */
+#qrSection {
+  display:none;
+  text-align:center;
+  margin-top:20px;
+  border:1px solid #2e7d32;
+  padding:15px;
+  border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo-section">
+    <img src="logo.png" alt="Logo">
+    <h1>AgroConnect</h1>
+  </div>
+  <div class="nav-icons">
+    <i class="fas fa-shopping-cart" onclick="goToPage('cart.html')"></i>
+    <i class="fas fa-truck" onclick="goToPage('track.html')"></i>
+    <i class="fas fa-user" onclick="goToPage('profile.html')"></i>
+    <i class="fas fa-home" onclick="goToPage('home.html')"></i>
+    <i class="fas fa-money-bill-wave" onclick="goToPage('buy.html')"></i>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="container">
+  <h2>Checkout</h2>
+  <form id="checkoutForm">
+    <label>Name</label>
+    <input type="text" id="name" required>
+    <label>Email</label>
+    <input type="email" id="email" required>
+    <label>Phone</label>
+    <input type="tel" id="phone" required>
+    <label>Address</label>
+    <textarea id="address" rows="3" required></textarea>
+
+    <h3>Cart Summary</h3>
+    <div class="cart-summary" id="cartSummary"></div>
+    <p id="totalAmount"></p>
+
+    <button type="button" id="codBtn">Cash on Delivery</button>
+    <button type="button" id="gpayBtn">GPay / Online Payment</button>
+  </form>
+
+  <!-- QR CODE SECTION -->
+  <div id="qrSection">
+    <h3>Scan & Pay Using GPay</h3>
+    <img src="qr.png" alt="QR Code" style="width:220px;height:220px;border-radius:10px;">
+    <p>Upload your payment screenshot below:</p>
+
+    <input type="file" id="gpayScreenshot" accept="image/*">
+
+    <button id="submitGpayPayment" style="
+      margin-top:10px;
+      background:#2e7d32;
+      padding:10px 15px;
+      border-radius:8px;">
+      Submit Payment
+    </button>
+  </div>
+
+</div>
+
+<script>
+
+function goToPage(page) { window.location.href = page; }
+function logout() {
+  localStorage.clear();
+  alert("Logged out successfully!");
+  window.location.href = "login.html";
+}
+
+// Load Cart Summary
+function loadCartSummary() {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const div = document.getElementById("cartSummary");
+  const totalAmount = document.getElementById("totalAmount");
+  div.innerHTML = "";
+  let total = 0;
+
+  if (!cart.length) {
+    div.innerHTML = "<p>Cart is empty</p>";
+    totalAmount.innerText = "Total: ₹0";
+    return;
+  }
+
+  cart.forEach(item => {
+    total += item.price * item.quantity;
+    div.innerHTML += `
+      <div class="cart-summary-item">
+        <img src="${item.image}">
+        <div>
+          <strong>${item.name}</strong><br>
+          ₹${item.price} × ${item.quantity}
+        </div>
+      </div>
+    `;
+  });
+
+  totalAmount.innerText = `Total: ₹${total}`;
+}
+
+loadCartSummary();
+
+document.getElementById("codBtn").addEventListener("click", () => placeOrder("cod"));
+
+/***********  SHOW QR ON GPAY CLICK ***********/
+document.getElementById("gpayBtn").addEventListener("click", () => {
+  document.getElementById("qrSection").style.display = "block";
+});
+
+/***********  SUBMIT GPAY SCREENSHOT ***********/
+document.getElementById("submitGpayPayment").addEventListener("click", () => {
+  const file = document.getElementById("gpayScreenshot").files[0];
+  if (!file) return alert("Please upload payment screenshot!");
+
+  const reader = new FileReader();
+  reader.onload = function () {
+    placeOrderWithGpay(reader.result);
+  };
+  reader.readAsDataURL(file);
+});
+
+/***********  PLACE ORDER – COD ***********/
+function placeOrder(paymentMethod) {
+  const order = getOrderData(paymentMethod, "");
+  if (!order) return;
+
+  sendOrder(order);
+}
+
+/***********  PLACE ORDER – GPAY ***********/
+function placeOrderWithGpay(image) {
+  const order = getOrderData("gpay", image);
+  if (!order) return;
+
+  sendOrder(order);
+}
+
+function getOrderData(paymentMethod, transactionImage) {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  if (!name || !email || !phone || !address) {
+    alert("Please fill all fields");
+    return null;
+  }
+
+  if (!cart.length) {
+    alert("Cart is empty");
+    return null;
+  }
+
+  return { name, email, phone, address, paymentMethod, cart, transactionImage };
+}
+
+/*********** SEND TO BACKEND ***********/
+function sendOrder(order) {
+  fetch("http://localhost:5000/api/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(order)
+  })
+  .then(async res => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    alert("✅ " + data.message);
+    localStorage.removeItem("cart");
+    window.location.href = "seller-dashboard.html";
+  })
+  .catch(err => {
+    alert("❌ Failed to place order. Check backend.");
+    console.error(err);
+  });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard</title>
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: url('https://png.pngtree.com/background/20230528/original/pngtree-farm-in-the-countryside-in-the-fall-picture-image_2774641.jpg') no-repeat center center/cover;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: #333;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-left img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+    border-radius: 8px;
+  }
+
+  .header-left h2 {
+    margin: 0;
+    color: #2e7d32;
+    font-size: 28px;
+  }
+
+  .header-right button {
+    margin-left: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+    transition: 0.3s;
+    background: #2e7d32;
+  }
+
+  .header-right button:hover {
+    background: #1b5e20;
+  }
+
+  .order-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    background: #fdfdfd;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: 0.3s;
+  }
+
+  .order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+
+  .accepted {
+    border: 2px solid #2e7d32;
+    background: #e8f5e9;
+  }
+
+  h3 { margin-bottom: 10px; color: #1b5e20; }
+  p { margin: 5px 0; }
+
+  .order-card ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .order-card img {
+    max-width: 200px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .status-text { font-weight: bold; }
+
+  .action-buttons {
+    margin-top: 10px;
+  }
+
+  button.accept { background: #2e7d32; }
+  button.accept:hover { background: #1b5e20; }
+
+  button.reject { background: #f44336; }
+  button.reject:hover { background: #d32f2f; }
+
+  button[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  p.no-orders {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+  }
+
+  @media(max-width: 600px) {
+    .order-card { padding: 15px; }
+    button { padding: 6px 12px; font-size: 13px; }
+    .header-left h2 { font-size: 22px; }
+    .header-left img { width: 40px; height: 40px; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <img src="logo.png" alt="Logo">
+      <h2>Seller Dashboard</h2>
+    </div>
+    <div class="header-right">
+      <button onclick="goHome()">🏠 Home</button>
+      <button onclick="logout()">🚪 Logout</button>
+    </div>
+  </div>
+
+  <div id="ordersDiv"></div>
+</div>
+
+<script>
+const ordersDiv = document.getElementById('ordersDiv');
+
+// Load Orders
+async function loadOrders() {
+  ordersDiv.innerHTML = '<p>Loading orders...</p>';
+
+  try {
+    const res = await fetch('http://localhost:5000/api/orders');
+    if (!res.ok) throw new Error("Server error");
+
+    const orders = await res.json();
+
+    if (!orders.length) {
+      ordersDiv.innerHTML = '<p class="no-orders">No orders yet.</p>';
+      return;
+    }
+
+    ordersDiv.innerHTML = '';
+
+    orders.forEach(order => {
+      let cartItems = [];
+
+      try {
+        cartItems = typeof order.cart === 'string' ? JSON.parse(order.cart) : order.cart;
+      } catch { cartItems = []; }
+
+      const div = document.createElement('div');
+      div.className = 'order-card';
+      if (order.status === 'Accepted') div.classList.add('accepted');
+
+      div.innerHTML = `
+        <h3>Order #${order.id}</h3>
+        <p><b>Name:</b> ${order.name}</p>
+        <p><b>Email:</b> ${order.email}</p>
+        <p><b>Phone:</b> ${order.phone}</p>
+        <p><b>Address:</b> ${order.address}</p>
+        <p><b>Payment Method:</b> ${order.paymentMethod}</p>
+        <p><b>Status:</b> <span class="status-text">${order.status}</span></p>
+
+        ${order.deliveryDate ? `<p><b>Delivery Date:</b> ${order.deliveryDate}</p>` : ''}
+
+        <h4>Items:</h4>
+        <ul>
+          ${cartItems.map(item => `
+            <li>${item.name} × ${item.quantity} - ₹${(item.price * item.quantity).toFixed(2)}</li>
+          `).join('')}
+        </ul>
+
+        ${order.paymentMethod === 'gpay' && order.transactionImage ? `
+          <h4>Transaction Proof:</h4>
+          <img src="${order.transactionImage}" alt="Transaction Proof">
+        ` : ''}
+
+        <div class="action-buttons">
+          <button class="accept" onclick="acceptOrder(${order.id})" ${order.status === 'Accepted' ? 'disabled' : ''}>
+            ${order.status === 'Accepted' ? 'Accepted ✅' : 'Accept'}
+          </button>
+          <button class="reject" onclick="rejectOrder(${order.id})" ${order.status === 'Accepted' ? 'disabled' : ''}>
+            Reject
+          </button>
+        </div>
+      `;
+
+      ordersDiv.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error(error);
+    ordersDiv.innerHTML = '<p class="no-orders">Failed to load orders.</p>';
+  }
+}
+
+// Accept Order
+async function acceptOrder(id) {
+  const deliveryDate = new Date();
+  deliveryDate.setDate(deliveryDate.getDate() + 5);
+
+  try {
+    const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: "Accepted",
+        deliveryDate: deliveryDate.toDateString()
+      })
+    });
+
+    if (!res.ok) throw new Error("Update failed");
+
+    alert("✅ Order Accepted!");
+    loadOrders();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to accept order.");
+  }
+}
+
+// Reject Order
+async function rejectOrder(id) {
+  if (!confirm("Are you sure you want to delete this order?")) return;
+
+  try {
+    const res = await fetch(`http://localhost:5000/api/orders/${id}`, { method: "DELETE" });
+
+    if (!res.ok) throw new Error("Delete failed");
+
+    alert("❌ Order Deleted!");
+    loadOrders();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete order.");
+  }
+}
+
+// Navigation
+function goHome() {
+  window.location.href = "home.html";
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+}
+
+// Start Loading
+loadOrders();
+</script>
+
+</body>
+</html>

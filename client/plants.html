@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroConnect - Sell Plants</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    body {background:url('https://wallpapercave.com/wp/wp9081772.jpg') no-repeat center center/cover;min-height:100vh;color:#333;display:flex;flex-direction:column;}
+    .navbar{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.6);padding:15px 40px;position:fixed;top:0;left:0;width:100%;backdrop-filter:blur(5px);z-index:10;}
+    .logo-section{display:flex;align-items:center;gap:10px;}
+    .logo-section img{width:45px;height:45px;border-radius:50%;object-fit:cover;}
+    .logo-section h1{font-size:24px;color:#fff;}
+    .nav-icons{display:flex;align-items:center;gap:25px;}
+    .nav-icons i{font-size:22px;color:#fff;cursor:pointer;transition:0.3s;}
+    .nav-icons i:hover{color:#ffe082;}
+    .logout-btn{background:#388e3c;border:none;padding:8px 15px;border-radius:8px;color:white;font-weight:bold;cursor:pointer;transition:background 0.3s;display:flex;align-items:center;gap:5px;}
+    .logout-btn:hover{background:#2e7d32;}
+    .main{flex:1;display:flex;flex-direction:column;padding:100px 40px 40px;max-width:1200px;margin:0 auto;width:100%;}
+    .page-header{text-align:center;margin-bottom:30px;color:white;text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
+    .page-header h2{font-size:32px;margin-bottom:10px;}
+    .content-container{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:20px;}
+    .form-container,.products-container{background:rgba(255,255,255,0.9);padding:30px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+    .form-container h3,.products-container h3{color:#2e7d32;text-align:center;margin-bottom:20px;}
+    .form-group{margin-bottom:20px;}
+    .form-group label{display:block;margin-bottom:8px;font-weight:600;color:#2e7d32a3;}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 15px;border:1px solid #ddd;border-radius:8px;font-size:16px;}
+    .submit-btn{background:#2e7d32cc;color:white;border:none;padding:15px 30px;border-radius:8px;font-size:18px;cursor:pointer;width:100%;transition:0.3s;}
+    .submit-btn:hover{background:#1b5e20;}
+    .product-list{display:grid;gap:20px;}
+    .product-card{background:white;border-radius:10px;padding:20px;box-shadow:0 3px 10px rgba(0,0,0,0.1);border-left:5px solid #388e3c;position:relative;}
+    .product-card img{width:100%;height:180px;object-fit:cover;border-radius:8px;margin-bottom:10px;}
+    .delete-btn{background:#e53935;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;float:right;transition:0.3s;}
+    .delete-btn:hover{background:#b71c1c;}
+    .empty-state{text-align:center;padding:30px;color:#666;}
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-section">
+      <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/619/619034.png'" alt="Logo">
+      <h1>AgroConnect</h1>
+    </div>
+     <div class="nav-icons">
+      <i class="fas fa-money-bill-wave" title="sell" onclick="goToPage('sell.html')"></i>
+      <i class="fas fa-shopping-cart" title="Cart" onclick="goToPage('cart.html')"></i>
+      <i class="fas fa-truck" title="Track Orders" onclick="goToPage('track.html')"></i>
+      <i class="fas fa-home" title="Home" onclick="goToPage('home.html')"></i>
+      <i class="fas fa-user" title="Profile" onclick="goToPage('profile.html')"></i>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h2>Sell Healthy Plants</h2>
+      <p>List your plants in the AgroConnect marketplace</p>
+    </div>
+
+    <div class="content-container">
+      <!-- Form -->
+      <div class="form-container">
+        <h3>Add New Plant</h3>
+        <form id="plantForm" enctype="multipart/form-data">
+          <div class="form-group"><label>Plant Name</label><input type="text" id="plantName" required></div>
+          <div class="form-group"><label>Type</label>
+            <select id="plantType" required>
+              <option value="">Select Type</option>
+              <option value="Indoor Plant">Indoor Plant</option>
+              <option value="Outdoor Plant">Outdoor Plant</option>
+              <option value="Flower Plant">Flower Plant</option>
+              <option value="Herbal Plant">Herbal Plant</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Price (₹)</label><input type="number" id="price" required></div>
+          <div class="form-group"><label>Quantity</label><input type="number" id="quantity" required></div>
+          <div class="form-group"><label>Quality</label>
+            <select id="quality" required>
+              <option value="">Select Quality</option>
+              <option value="Premium">Premium</option>
+              <option value="Grade A">Grade A</option>
+              <option value="Organic">Organic</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Seller Address</label><input type="text" id="address" placeholder="Enter your address" required></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="Enter your contact number" required></div>
+          <div class="form-group"><label>Description</label><textarea id="description"></textarea></div>
+          <div class="form-group"><label>Image</label><input type="file" id="plantImage" name="image" accept="image/*"></div>
+          <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> Add Plant</button>
+        </form>
+      </div>
+
+      <!-- List -->
+      <div class="products-container">
+        <h3>Your Plant Listings</h3>
+        <div class="product-list" id="productList">
+          <div class="empty-state" id="emptyState">
+            <i class="fas fa-seedling"></i>
+            <p>No plants added yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const API_BASE_URL = 'http://127.0.0.1:5000/api/plants';
+const form = document.getElementById('plantForm');
+const list = document.getElementById('productList');
+const emptyState = document.getElementById('emptyState');
+
+document.addEventListener('DOMContentLoaded', loadPlants);
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append('name', document.getElementById('plantName').value);
+  formData.append('type', document.getElementById('plantType').value);
+  formData.append('price', document.getElementById('price').value);
+  formData.append('quantity', document.getElementById('quantity').value);
+  formData.append('quality', document.getElementById('quality').value);
+  formData.append('seller_address', document.getElementById('address').value); // ✅ Added
+  formData.append('seller_phone', document.getElementById('phone').value);     // ✅ Added
+  formData.append('description', document.getElementById('description').value);
+  const img = document.getElementById('plantImage').files[0];
+  if (img) formData.append('image', img);
+
+  try {
+    const res = await fetch(API_BASE_URL, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (res.ok) {
+      form.reset();
+      await loadPlants();
+      alert('✅ Plant added successfully!');
+    } else alert('❌ Failed: ' + (data.message || 'Unknown error'));
+  } catch (err) {
+    alert('Network error: ' + err.message);
+  }
+});
+
+async function loadPlants() {
+  try {
+    const res = await fetch(API_BASE_URL);
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } 
+    catch { console.error('Invalid JSON:', text); return; }
+
+    const plants = Array.isArray(data) ? data : data.data || [];
+    displayPlants(plants);
+  } catch (err) {
+    console.error('Error loading plants:', err);
+  }
+}
+
+function displayPlants(plants) {
+  list.innerHTML = '';
+  if (!plants.length) {
+    emptyState.style.display = 'block';
+    list.appendChild(emptyState);
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  plants.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <img src="${p.image ? p.image : 'https://cdn-icons-png.flaticon.com/512/619/619034.png'}" alt="${p.name}">
+      <h4>${p.name} - ₹${p.price}</h4>
+      <p><b>Type:</b> ${p.type} | <b>Quality:</b> ${p.quality}</p>
+      <p><b>Address:</b> ${p.seller_address || 'N/A'}</p>
+      <p><b>Phone:</b> ${p.seller_phone || 'N/A'}</p>
+      <p>${p.description || ''}</p>
+      <button class="delete-btn" onclick="deletePlant(${p.id})"><i class="fas fa-trash"></i> Delete</button>
+    `;
+    list.appendChild(card);
+  });
+}
+
+async function deletePlant(id) {
+  if (!confirm('Are you sure you want to delete this plant?')) return;
+  try {
+    const res = await fetch(`${API_BASE_URL}/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      alert('🗑️ Plant deleted successfully');
+      await loadPlants();
+    } else {
+      const data = await res.json();
+      alert('Failed to delete: ' + (data.message || 'Unknown error'));
+    }
+  } catch (err) {
+    alert('Network error: ' + err.message);
+  }
+}
+
+function logout() {
+  alert('Logged out!');
+  window.location.href = 'index.html';
+}
+function goToPage(p) { window.location.href = p; }
+</script>
+</body>
+</html>

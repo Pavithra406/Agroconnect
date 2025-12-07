@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroConnect - Sign Up</title>
+  <style>
+    body.auth-body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://wallpaperaccess.com/full/4293117.jpg') no-repeat center center/cover;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .auth-container {
+      background: rgba(255,255,255,0.9);
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 350px;
+    }
+    .logo-section { margin-bottom: 10px; }
+    .site-logo { width: 80px; height: 80px; border-radius: 50%; }
+    h1 { color: #2e7d32; font-size: 26px; margin-top: 10px; }
+    h2 { color: #444; margin-bottom: 20px; }
+    form { display: flex; flex-direction: column; gap: 15px; }
+    input { padding: 12px; border: 1px solid #ccc; border-radius: 8px; outline: none; font-size: 14px; }
+    input:focus { border-color: #2e7d32; box-shadow: 0 0 5px #2e7d32; }
+    button { background-color: #2e7d32; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    button:hover { background-color: #1b5e20; }
+    p { color: #333; font-size: 14px; }
+    a { color: #2e7d32; text-decoration: none; font-weight: bold; }
+    a:hover { text-decoration: underline; }
+    #msg { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body class="auth-body">
+  <div class="auth-container">
+    <div class="logo-section">
+      <img src="logo.png" alt="AgroConnect Logo" class="site-logo" />
+      <h1>AgroConnect</h1>
+    </div>
+
+    <h2>Create Account</h2>
+
+    <form id="signupForm" enctype="multipart/form-data">
+      <input type="text" id="fullname" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="text" id="phone" placeholder="Phone" />
+      <input type="text" id="address" placeholder="Address" />
+      <input type="file" id="profile_image" accept="image/*" />
+      <button type="submit">Sign Up</button>
+      <p>Already have an account? <a href="index.html">Login</a></p>
+    </form>
+
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append("fullname", document.getElementById("fullname").value.trim());
+      formData.append("email", document.getElementById("email").value.trim());
+      formData.append("password", document.getElementById("password").value);
+      formData.append("phone", document.getElementById("phone").value.trim());
+      formData.append("address", document.getElementById("address").value.trim());
+
+      const fileInput = document.getElementById("profile_image");
+      if (fileInput.files[0]) formData.append("profile_image", fileInput.files[0]);
+
+      try {
+        const res = await fetch("http://localhost:5000/api/signup", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem("token", data.token); // Save JWT token
+          alert("Signup successful!");
+          window.location.href = "home.html"; // Redirect after signup
+        } else {
+          document.getElementById("msg").innerText = data.message || "Signup failed";
+        }
+      } catch (err) {
+        console.error("Signup error:", err);
+        document.getElementById("msg").innerText = "Server error. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
