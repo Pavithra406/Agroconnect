@@ -93,6 +93,7 @@
 
         if (res.ok && data.token) {
           localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.user ? data.user.role : 'buyer');
           window.location.href = "home.html"; // redirect to profile/home
         } else {
           document.getElementById("msg").innerText = data.message || "Login failed!";

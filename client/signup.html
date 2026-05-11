@@ -52,6 +52,11 @@
       <input type="password" id="password" placeholder="Password" required />
       <input type="text" id="phone" placeholder="Phone" />
       <input type="text" id="address" placeholder="Address" />
+      <select id="role" required style="padding: 12px; border: 1px solid #ccc; border-radius: 8px; outline: none; font-size: 14px; background: white;">
+        <option value="" disabled selected>Select Role</option>
+        <option value="buyer">Buyer</option>
+        <option value="seller">Seller</option>
+      </select>
       <input type="file" id="profile_image" accept="image/*" />
       <button type="submit">Sign Up</button>
       <p>Already have an account? <a href="index.html">Login</a></p>
@@ -70,6 +75,7 @@
       formData.append("password", document.getElementById("password").value);
       formData.append("phone", document.getElementById("phone").value.trim());
       formData.append("address", document.getElementById("address").value.trim());
+      formData.append("role", document.getElementById("role").value);
 
       const fileInput = document.getElementById("profile_image");
       if (fileInput.files[0]) formData.append("profile_image", fileInput.files[0]);
@@ -84,6 +90,7 @@
 
         if (res.ok) {
           localStorage.setItem("token", data.token); // Save JWT token
+          localStorage.setItem("role", data.user ? data.user.role : 'buyer'); // Save user role
           alert("Signup successful!");
           window.location.href = "home.html"; // Redirect after signup
         } else {

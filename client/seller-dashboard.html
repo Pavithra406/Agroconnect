@@ -3,293 +3,552 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seller Dashboard</title>
-
+<title>AgroConnect - Seller Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Poppins', sans-serif;
-    background: url('https://png.pngtree.com/background/20230528/original/pngtree-farm-in-the-countryside-in-the-fall-picture-image_2774641.jpg') no-repeat center center/cover;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+    background:
+      linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.48)),
+      url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1600&auto=format&fit=crop') no-repeat center center / cover;
+    background-attachment: fixed;
     color: #333;
-    position: relative;
+    min-height: 100vh;
   }
 
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 40px auto;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-  }
-
-  .header {
+  .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    background: #2e7d32;
+    padding: 14px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   }
 
-  .header-left {
+  .logo-section { display: flex; align-items: center; gap: 10px; }
+  .logo-section img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+  .logo-section span { font-size: 1.2rem; font-weight: 700; color: #fff; }
+
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+
+  .nav-btn {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 7px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.2s;
     display: flex;
     align-items: center;
+    gap: 6px;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.25); }
+
+  .hero {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047);
+    color: #fff;
+    padding: 32px 40px;
+  }
+  .hero h1 { font-size: 1.6rem; font-weight: 700; }
+  .hero p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+
+  /* STATS */
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: -28px auto 0;
+    padding: 0 30px;
+    position: relative;
+    z-index: 2;
   }
 
-  .header-left img {
-    width: 50px;
-    height: 50px;
-    margin-right: 15px;
-    border-radius: 8px;
+  .stat-card {
+    flex: 1;
+    min-width: 130px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); }
+
+  .stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .stat-icon.total    { background: #e8f5e9; color: #2e7d32; }
+  .stat-icon.pending  { background: #fff8e1; color: #f9a825; }
+  .stat-icon.accepted { background: #e3f2fd; color: #1565c0; }
+  .stat-icon.rejected { background: #ffebee; color: #e53935; }
+
+  .stat-info span { display: block; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
+  .stat-info strong { font-size: 1.5rem; font-weight: 700; color: #222; line-height: 1.2; }
+
+  /* CONTENT */
+  .content {
+    max-width: 1100px;
+    margin: 30px auto 50px;
+    padding: 24px 30px 30px;
+    background: rgba(240,244,240,0.92);
+    border-radius: 16px;
   }
 
-  .header-left h2 {
-    margin: 0;
-    color: #2e7d32;
-    font-size: 28px;
+  /* FILTER TABS */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 30px 0 20px;
   }
 
-  .header-right button {
-    margin-left: 10px;
-    padding: 8px 16px;
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 2px solid #ddd;
+    background: #fff;
+    color: #666;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { border-color: #2e7d32; color: #2e7d32; }
+  .tab-btn.active-all      { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+  .tab-btn.active-pending  { background: #f9a825; color: #fff; border-color: #f9a825; }
+  .tab-btn.active-accepted { background: #1565c0; color: #fff; border-color: #1565c0; }
+  .tab-btn.active-rejected { background: #e53935; color: #fff; border-color: #e53935; }
+
+  .tab-count {
+    background: rgba(0,0,0,0.12);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.78rem;
+  }
+
+  /* ORDER CARD */
+  .order-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    border-left: 4px solid #ccc;
+  }
+  .order-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+  .order-card.accepted { border-left-color: #2e7d32; }
+  .order-card.pending  { border-left-color: #f9a825; }
+  .order-card.rejected { border-left-color: #e53935; }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f4f0;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .order-id { font-size: 1rem; font-weight: 700; color: #1b5e20; }
+
+  .status-badge {
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .badge-pending  { background: #fff8e1; color: #f9a825; }
+  .badge-accepted { background: #e8f5e9; color: #2e7d32; }
+  .badge-rejected { background: #ffebee; color: #e53935; }
+
+  .card-body {
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 30px;
+  }
+
+  .info-row { display: flex; flex-direction: column; gap: 2px; }
+  .info-row label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.4px; color: #999; font-weight: 600; }
+  .info-row span { font-size: 0.9rem; color: #333; }
+
+  .items-section { padding: 0 20px 16px; }
+  .items-section h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px; color: #888; margin-bottom: 10px; font-weight: 600; }
+
+  .items-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .items-table th { background: #f7fbf7; color: #2e7d32; padding: 8px 10px; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #e0ede0; }
+  .items-table td { padding: 8px 10px; border-bottom: 1px solid #f0f4f0; color: #444; }
+  .items-table tr:last-child td { border-bottom: none; }
+  .total-row td { font-weight: 700; color: #1b5e20; border-top: 2px solid #e0ede0; padding-top: 10px; }
+
+  .txn-section { padding: 0 20px 16px; }
+  .txn-section h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .txn-section img { max-width: 200px; border-radius: 8px; border: 1px solid #ddd; }
+
+  .card-actions {
+    padding: 14px 20px;
+    background: #fafafa;
+    border-top: 1px solid #f0f4f0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-accept, .btn-reject {
+    padding: 9px 22px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    color: white;
+    font-size: 0.88rem;
     font-weight: 600;
-    transition: 0.3s;
-    background: #2e7d32;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, transform 0.15s;
   }
+  .btn-accept { background: #2e7d32; color: #fff; }
+  .btn-accept:hover:not(:disabled) { background: #1b5e20; transform: translateY(-1px); }
+  .btn-reject { background: #ffebee; color: #e53935; border: 1px solid #ffcdd2; }
+  .btn-reject:hover:not(:disabled) { background: #ffcdd2; transform: translateY(-1px); }
+  button:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
 
-  .header-right button:hover {
-    background: #1b5e20;
+  .state-msg { text-align: center; padding: 60px 20px; color: #888; }
+  .state-msg i { font-size: 3rem; color: #ccc; display: block; margin-bottom: 14px; }
+  .state-msg p { font-size: 1rem; }
+
+  .spinner {
+    width: 40px; height: 40px;
+    border: 4px solid #e0ede0;
+    border-top-color: #2e7d32;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 14px;
   }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .order-card {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 12px;
-    background: #fdfdfd;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: 0.3s;
-  }
-
-  .order-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  }
-
-  .accepted {
-    border: 2px solid #2e7d32;
-    background: #e8f5e9;
-  }
-
-  h3 { margin-bottom: 10px; color: #1b5e20; }
-  p { margin: 5px 0; }
-
-  .order-card ul {
-    margin: 10px 0;
-    padding-left: 20px;
-  }
-
-  .order-card img {
-    max-width: 200px;
-    margin-top: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-
-  .status-text { font-weight: bold; }
-
-  .action-buttons {
-    margin-top: 10px;
-  }
-
-  button.accept { background: #2e7d32; }
-  button.accept:hover { background: #1b5e20; }
-
-  button.reject { background: #f44336; }
-  button.reject:hover { background: #d32f2f; }
-
-  button[disabled] {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  p.no-orders {
-    text-align: center;
-    font-size: 18px;
-    color: #555;
-  }
-
-  @media(max-width: 600px) {
-    .order-card { padding: 15px; }
-    button { padding: 6px 12px; font-size: 13px; }
-    .header-left h2 { font-size: 22px; }
-    .header-left img { width: 40px; height: 40px; }
+  @media (max-width: 650px) {
+    .navbar { padding: 12px 18px; }
+    .hero { padding: 24px 18px; }
+    .stats-bar { padding: 0 18px; }
+    .content { padding: 0 18px; }
+    .card-body { grid-template-columns: 1fr; }
   }
 </style>
 </head>
-
 <body>
 
-<div class="container">
-  <div class="header">
-    <div class="header-left">
-      <img src="logo.png" alt="Logo">
-      <h2>Seller Dashboard</h2>
-    </div>
-    <div class="header-right">
-      <button onclick="goHome()">🏠 Home</button>
-      <button onclick="logout()">🚪 Logout</button>
+<nav class="navbar">
+  <div class="logo-section">
+    <img src="logo.png" alt="AgroConnect Logo">
+    <span>AgroConnect</span>
+  </div>
+  <div class="nav-right">
+    <button class="nav-btn" onclick="location.href='home.html'">
+      <i class="fas fa-home"></i> Home
+    </button>
+    <button class="nav-btn" onclick="logout()">
+      <i class="fas fa-right-from-bracket"></i> Logout
+    </button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1><i class="fas fa-store"></i> Seller Dashboard</h1>
+  <p>Manage and respond to incoming customer orders</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card" onclick="filterOrders('all')">
+    <div class="stat-icon total"><i class="fas fa-box"></i></div>
+    <div class="stat-info">
+      <span>Total</span>
+      <strong id="stat-total">—</strong>
     </div>
   </div>
+  <div class="stat-card" onclick="filterOrders('pending')">
+    <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
+    <div class="stat-info">
+      <span>Pending</span>
+      <strong id="stat-pending">—</strong>
+    </div>
+  </div>
+  <div class="stat-card" onclick="filterOrders('accepted')">
+    <div class="stat-icon accepted"><i class="fas fa-circle-check"></i></div>
+    <div class="stat-info">
+      <span>Accepted</span>
+      <strong id="stat-accepted">—</strong>
+    </div>
+  </div>
+  <div class="stat-card" onclick="filterOrders('rejected')">
+    <div class="stat-icon rejected"><i class="fas fa-circle-xmark"></i></div>
+    <div class="stat-info">
+      <span>Rejected</span>
+      <strong id="stat-rejected">—</strong>
+    </div>
+  </div>
+</div>
 
+<div class="content">
+  <div class="filter-tabs">
+    <button class="tab-btn active-all" id="tab-all" onclick="filterOrders('all')">
+      <i class="fas fa-list-ul"></i> All <span class="tab-count" id="tc-all">0</span>
+    </button>
+    <button class="tab-btn" id="tab-pending" onclick="filterOrders('pending')">
+      <i class="fas fa-clock"></i> Pending <span class="tab-count" id="tc-pending">0</span>
+    </button>
+    <button class="tab-btn" id="tab-accepted" onclick="filterOrders('accepted')">
+      <i class="fas fa-circle-check"></i> Accepted <span class="tab-count" id="tc-accepted">0</span>
+    </button>
+    <button class="tab-btn" id="tab-rejected" onclick="filterOrders('rejected')">
+      <i class="fas fa-circle-xmark"></i> Rejected <span class="tab-count" id="tc-rejected">0</span>
+    </button>
+  </div>
   <div id="ordersDiv"></div>
 </div>
 
 <script>
-const ordersDiv = document.getElementById('ordersDiv');
+  const ordersDiv = document.getElementById('ordersDiv');
+  let allOrders = [];
+  let activeFilter = 'all';
 
-// Load Orders
-async function loadOrders() {
-  ordersDiv.innerHTML = '<p>Loading orders...</p>';
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  }
 
-  try {
-    const res = await fetch('http://localhost:5000/api/orders');
-    if (!res.ok) throw new Error("Server error");
+  function getTotal(cartItems) {
+    return cartItems.reduce((sum, i) => sum + (parseFloat(i.price) * parseInt(i.quantity)), 0);
+  }
 
-    const orders = await res.json();
+  function badgeClass(status) {
+    const s = (status || '').toLowerCase();
+    if (s === 'accepted') return 'badge-accepted';
+    if (s === 'rejected') return 'badge-rejected';
+    return 'badge-pending';
+  }
 
+  function cardClass(status) {
+    const s = (status || '').toLowerCase();
+    if (s === 'accepted') return 'accepted';
+    if (s === 'rejected') return 'rejected';
+    return 'pending';
+  }
+
+  function updateTabs(orders) {
+    const total    = orders.length;
+    const pending  = orders.filter(o => !o.status || o.status === 'Pending').length;
+    const accepted = orders.filter(o => o.status === 'Accepted').length;
+    const rejected = orders.filter(o => o.status === 'Rejected').length;
+
+    document.getElementById('stat-total').textContent    = total;
+    document.getElementById('stat-pending').textContent  = pending;
+    document.getElementById('stat-accepted').textContent = accepted;
+    document.getElementById('stat-rejected').textContent = rejected;
+
+    document.getElementById('tc-all').textContent      = total;
+    document.getElementById('tc-pending').textContent  = pending;
+    document.getElementById('tc-accepted').textContent = accepted;
+    document.getElementById('tc-rejected').textContent = rejected;
+  }
+
+  function setActiveTab(filter) {
+    ['all','pending','accepted','rejected'].forEach(f => {
+      const btn = document.getElementById('tab-' + f);
+      btn.className = 'tab-btn' + (f === filter ? ' active-' + f : '');
+    });
+  }
+
+  function filterOrders(filter) {
+    activeFilter = filter;
+    setActiveTab(filter);
+
+    const filtered = filter === 'all'
+      ? allOrders
+      : allOrders.filter(o => {
+          const s = (o.status || 'Pending').toLowerCase();
+          return s === filter;
+        });
+
+    renderOrders(filtered);
+  }
+
+  function renderOrders(orders) {
     if (!orders.length) {
-      ordersDiv.innerHTML = '<p class="no-orders">No orders yet.</p>';
+      const labels = { all: 'No orders yet.', pending: 'No pending orders.', accepted: 'No accepted orders.', rejected: 'No rejected orders.' };
+      ordersDiv.innerHTML = `
+        <div class="state-msg">
+          <i class="fas fa-inbox"></i>
+          <p>${labels[activeFilter] || 'No orders.'}</p>
+        </div>`;
       return;
     }
 
     ordersDiv.innerHTML = '';
-
     orders.forEach(order => {
       let cartItems = [];
-
       try {
-        cartItems = typeof order.cart === 'string' ? JSON.parse(order.cart) : order.cart;
+        cartItems = typeof order.cart === 'string' ? JSON.parse(order.cart) : (order.cart || []);
       } catch { cartItems = []; }
 
-      const div = document.createElement('div');
-      div.className = 'order-card';
-      if (order.status === 'Accepted') div.classList.add('accepted');
+      const total = getTotal(cartItems);
+      const status = order.status || 'Pending';
+      const isAccepted = status === 'Accepted';
+      const isRejected = status === 'Rejected';
+      const actionsDone = isAccepted || isRejected;
 
-      div.innerHTML = `
-        <h3>Order #${order.id}</h3>
-        <p><b>Name:</b> ${order.name}</p>
-        <p><b>Email:</b> ${order.email}</p>
-        <p><b>Phone:</b> ${order.phone}</p>
-        <p><b>Address:</b> ${order.address}</p>
-        <p><b>Payment Method:</b> ${order.paymentMethod}</p>
-        <p><b>Status:</b> <span class="status-text">${order.status}</span></p>
-
-        ${order.deliveryDate ? `<p><b>Delivery Date:</b> ${order.deliveryDate}</p>` : ''}
-
-        <h4>Items:</h4>
-        <ul>
-          ${cartItems.map(item => `
-            <li>${item.name} × ${item.quantity} - ₹${(item.price * item.quantity).toFixed(2)}</li>
-          `).join('')}
-        </ul>
-
+      const card = document.createElement('div');
+      card.className = `order-card ${cardClass(status)}`;
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="order-id"><i class="fas fa-hashtag"></i> Order ${order.id}</span>
+          <span class="status-badge ${badgeClass(status)}">${status}</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <label><i class="fas fa-user"></i> Customer</label>
+            <span>${order.name}</span>
+          </div>
+          <div class="info-row">
+            <label><i class="fas fa-envelope"></i> Email</label>
+            <span>${order.email}</span>
+          </div>
+          <div class="info-row">
+            <label><i class="fas fa-phone"></i> Phone</label>
+            <span>${order.phone}</span>
+          </div>
+          <div class="info-row">
+            <label><i class="fas fa-credit-card"></i> Payment</label>
+            <span>${order.paymentMethod}</span>
+          </div>
+          <div class="info-row" style="grid-column: 1 / -1">
+            <label><i class="fas fa-location-dot"></i> Address</label>
+            <span>${order.address}</span>
+          </div>
+          ${order.deliveryDate ? `
+          <div class="info-row">
+            <label><i class="fas fa-truck"></i> Delivery Date</label>
+            <span>${order.deliveryDate}</span>
+          </div>` : ''}
+        </div>
+        <div class="items-section">
+          <h4>Order Items</h4>
+          <table class="items-table">
+            <thead>
+              <tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+              ${cartItems.map(item => `
+                <tr>
+                  <td>${item.name}</td>
+                  <td>${item.quantity}</td>
+                  <td>₹${parseFloat(item.price).toFixed(2)}</td>
+                  <td>₹${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)}</td>
+                </tr>`).join('')}
+              <tr class="total-row">
+                <td colspan="3">Total</td>
+                <td>₹${total.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         ${order.paymentMethod === 'gpay' && order.transactionImage ? `
-          <h4>Transaction Proof:</h4>
+        <div class="txn-section">
+          <h4>Transaction Proof</h4>
           <img src="${order.transactionImage}" alt="Transaction Proof">
-        ` : ''}
-
-        <div class="action-buttons">
-          <button class="accept" onclick="acceptOrder(${order.id})" ${order.status === 'Accepted' ? 'disabled' : ''}>
-            ${order.status === 'Accepted' ? 'Accepted ✅' : 'Accept'}
+        </div>` : ''}
+        <div class="card-actions">
+          <button class="btn-accept" onclick="acceptOrder(${order.id})" ${actionsDone ? 'disabled' : ''}>
+            <i class="fas fa-circle-check"></i> ${isAccepted ? 'Accepted' : 'Accept Order'}
           </button>
-          <button class="reject" onclick="rejectOrder(${order.id})" ${order.status === 'Accepted' ? 'disabled' : ''}>
-            Reject
+          <button class="btn-reject" onclick="rejectOrder(${order.id})" ${actionsDone ? 'disabled' : ''}>
+            <i class="fas fa-circle-xmark"></i> ${isRejected ? 'Rejected' : 'Reject'}
           </button>
         </div>
       `;
-
-      ordersDiv.appendChild(div);
+      ordersDiv.appendChild(card);
     });
-
-  } catch (error) {
-    console.error(error);
-    ordersDiv.innerHTML = '<p class="no-orders">Failed to load orders.</p>';
   }
-}
 
-// Accept Order
-async function acceptOrder(id) {
-  const deliveryDate = new Date();
-  deliveryDate.setDate(deliveryDate.getDate() + 5);
+  async function loadOrders() {
+    ordersDiv.innerHTML = `
+      <div class="state-msg">
+        <div class="spinner"></div>
+        <p>Loading orders...</p>
+      </div>`;
 
-  try {
-    const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        status: "Accepted",
-        deliveryDate: deliveryDate.toDateString()
-      })
-    });
-
-    if (!res.ok) throw new Error("Update failed");
-
-    alert("✅ Order Accepted!");
-    loadOrders();
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to accept order.");
+    try {
+      const res = await fetch('http://localhost:5000/api/orders');
+      if (!res.ok) throw new Error("Server error");
+      allOrders = await res.json();
+      updateTabs(allOrders);
+      filterOrders(activeFilter);
+    } catch (err) {
+      console.error(err);
+      ordersDiv.innerHTML = `
+        <div class="state-msg">
+          <i class="fas fa-triangle-exclamation" style="color:#e53935"></i>
+          <p>Failed to load orders. Please try again later.</p>
+        </div>`;
+    }
   }
-}
 
-// Reject Order
-async function rejectOrder(id) {
-  if (!confirm("Are you sure you want to delete this order?")) return;
-
-  try {
-    const res = await fetch(`http://localhost:5000/api/orders/${id}`, { method: "DELETE" });
-
-    if (!res.ok) throw new Error("Delete failed");
-
-    alert("❌ Order Deleted!");
-    loadOrders();
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to delete order.");
+  async function acceptOrder(id) {
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + 5);
+    try {
+      const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Accepted", deliveryDate: deliveryDate.toDateString() })
+      });
+      if (!res.ok) throw new Error("Update failed");
+      loadOrders();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to accept order.");
+    }
   }
-}
 
-// Navigation
-function goHome() {
-  window.location.href = "home.html";
-}
+  async function rejectOrder(id) {
+    if (!confirm("Are you sure you want to reject this order?")) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/orders/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Reject failed");
+      loadOrders();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to reject order.");
+    }
+  }
 
-function logout() {
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
-}
-
-// Start Loading
-loadOrders();
+  loadOrders();
 </script>
-
 </body>
 </html>

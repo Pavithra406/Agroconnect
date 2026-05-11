@@ -39,7 +39,7 @@ const db = await mysql.createPool({
   waitForConnections: true,
   connectionLimit: 100,
 });
-console.log("✅ MySQL connected");
+console.log("✅ MySQL connected")
 
 // ✅ Example query usage everywhere
 const [rows] = await db.query("SELECT * FROM commodity_prices");
@@ -591,6 +591,7 @@ equipmentRouter.delete("/:id", async (req, res) => {
 });
 app.use("/api/equipments", equipmentRouter);
 
+
 // ------------------- ENDPOINT: GET TAMIL NADU MARKETS -------------------
 app.get("/api/markets/tn", async (req, res) => {
   try {
@@ -620,31 +621,49 @@ app.get("/api/markets/tn", async (req, res) => {
 
 // ------------------- FUNCTION: FETCH & STORE DATA -------------------
 async function fetchAndStore() {
+  const apiUrl =
+    "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070" +
+    "?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b" +
+    "&format=json&offset=0&limit=1000&filters%5Bstate.keyword%5D=Tamil%20Nadu";
+
+  // Retry with exponential backoff on 429
+  let response;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      response = await axios.get(apiUrl);
+      break;
+    } catch (err) {
+      if (err.response?.status === 429) {
+        const wait = attempt * 60 * 1000; // 1min, 2min, 3min
+        console.warn(`⚠️ Rate limited (429). Retrying in ${attempt} min...`);
+        await new Promise(r => setTimeout(r, wait));
+      } else {
+        console.error("❌ Error fetching market data:", err.message);
+        return;
+      }
+    }
+  }
+
+  if (!response) {
+    console.error("❌ Failed to fetch market data after 3 attempts (rate limited).");
+    return;
+  }
+
   try {
-    console.log("Fetching Tamil Nadu market data...");
-
-    const apiUrl =
-      "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070" +
-      "?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b" +
-      "&format=json&offset=0&limit=1000&filters%5Bstate.keyword%5D=Tamil%20Nadu";
-
-    const response = await axios.get(apiUrl);
-    const data = response.data.records;
-    const tnData = data.filter((r) => r.state === "Tamil Nadu");
+    console.log("📦 Storing Tamil Nadu market data...");
+    const tnData = (response.data.records || []).filter((r) => r.state === "Tamil Nadu");
 
     for (const rec of tnData) {
-      // ✅ Convert "DD/MM/YYYY" → "YYYY-MM-DD"
       let mysqlDate = null;
       if (rec.arrival_date) {
         if (rec.arrival_date.includes("/")) {
           const [day, month, year] = rec.arrival_date.split("/");
           mysqlDate = `${year}-${month}-${day}`;
         } else if (rec.arrival_date.includes("-")) {
-          mysqlDate = rec.arrival_date; // already correct format
+          mysqlDate = rec.arrival_date;
         }
       }
 
-      // 1️⃣ Check if market exists
       const [rows] = await db.query(
         `SELECT id FROM markets WHERE state = ? AND district = ? AND market_name = ?`,
         [rec.state, rec.district, rec.market]
@@ -660,32 +679,21 @@ async function fetchAndStore() {
         marketId = insert.insertId;
       } else {
         marketId = rows[0].id;
-        await db.query(`UPDATE markets SET last_updated = NOW() WHERE id = ?`, [
-          marketId,
-        ]);
+        await db.query(`UPDATE markets SET last_updated = NOW() WHERE id = ?`, [marketId]);
       }
 
-      // 2️⃣ Insert commodity price record
       await db.query(
         `INSERT INTO commodity_prices 
          (market_id, commodity, variety, min_price, modal_price, max_price, arrival_qty, price_date)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          marketId,
-          rec.commodity,
-          rec.variety,
-          rec.min_price,
-          rec.modal_price,
-          rec.max_price,
-          rec.arrivals_in_tonnes || 0,
-          mysqlDate || null,
-        ]
+        [marketId, rec.commodity, rec.variety, rec.min_price, rec.modal_price,
+         rec.max_price, rec.arrivals_in_tonnes || 0, mysqlDate || null]
       );
     }
 
     console.log("✅ Tamil Nadu data updated:", tnData.length, "records");
   } catch (err) {
-    console.error("❌ Error fetching/storing data:", err);
+    console.error("❌ Error storing market data:", err.message);
   }
 }
 
@@ -694,8 +702,20 @@ cron.schedule("0 4 * * *", () => {
   fetchAndStore();
 });
 
-// ✅ Run once on startup
-fetchAndStore();
+// Run on startup only if DB has no market data yet
+(async () => {
+  try {
+    const [rows] = await db.query("SELECT COUNT(*) as cnt FROM markets");
+    if (rows[0].cnt === 0) {
+      console.log("🌱 No market data found — fetching on startup...");
+      fetchAndStore();
+    } else {
+      console.log(`ℹ️ Market data already present (${rows[0].cnt} markets). Skipping startup fetch.`);
+    }
+  } catch {
+    // table may not exist yet, skip silently
+  }
+})();
 
 
 // ------------------- START SERVER -------------------

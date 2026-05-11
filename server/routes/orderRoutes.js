@@ -149,7 +149,7 @@ router.delete("/:id", async (req, res) => {
 
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    await db.execute("DELETE FROM orders WHERE id=?", [req.params.id]);
+    await db.execute("UPDATE orders SET status=? WHERE id=?", ["Rejected", req.params.id]);
 
     // Rejection email
     const msg = `
@@ -170,7 +170,7 @@ router.delete("/:id", async (req, res) => {
 
     await sendEmail(order.email, `Order #${order.id} Rejected`, msg);
 
-    res.json({ message: "Order deleted successfully" });
+    res.json({ message: "Order rejected successfully" });
 
   } catch (err) {
     console.error("Error deleting order:", err);

@@ -141,7 +141,8 @@
 
     .button-container {
       display: grid;
-      grid-template-columns: repeat(3, 200px);
+      grid-template-columns: repeat(2, 200px);
+      justify-content: center;
       gap: 30px;
       background: rgba(255, 255, 255, 0.15);
       padding: 40px;
@@ -216,10 +217,10 @@
       <i class="fas fa-user" title="Profile" onclick="goToPage('profile.html')"></i>
 
       <!-- Cart Icon -->
-      <i class="fas fa-shopping-cart" title="Cart" onclick="goToPage('cart.html')"></i>
+      <i class="fas fa-shopping-cart" id="cartIcon" title="Cart" onclick="goToPage('cart.html')"></i>
 
       <!-- Seller Dashboard Icon -->
-      <i class="fas fa-store seller-icon" title="Seller Dashboard" onclick="goToPage('seller-dashboard.html')"></i>
+      <i class="fas fa-store seller-icon" id="sellerDashIcon" title="Seller Dashboard" onclick="goToPage('seller-dashboard.html')"></i>
 
       <!-- Track Orders Icon -->
       <i class="fas fa-truck-fast" title="Track Orders" onclick="goToPage('track.html')"></i>
@@ -237,12 +238,12 @@
   <!-- 🌻 Main Buttons - 3 Options Only -->
   <div class="main">
     <div class="button-container">
-      <button class="btn" onclick="location.href='sell.html'">
+      <button class="btn" id="sellBtn" onclick="location.href='sell.html'">
         <i class="fas fa-hand-holding-dollar"></i>
         Sell Products
       </button>
       
-      <button class="btn" onclick="location.href='buy.html'">
+      <button class="btn" id="buyBtn" onclick="location.href='buy.html'">
         <i class="fas fa-shopping-bag"></i>
         Buy Products
       </button>
@@ -251,10 +252,31 @@
         <i class="fas fa-chart-line"></i>
         Market Price
       </button>
+
     </div>
   </div>
 
   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const role = localStorage.getItem("role") || 'buyer';
+      
+      // Hide buyer features for sellers
+      if (role === 'seller') {
+        const buyBtn = document.getElementById("buyBtn");
+        const cartIcon = document.getElementById("cartIcon");
+        if (buyBtn) buyBtn.style.display = "none";
+        if (cartIcon) cartIcon.style.display = "none";
+      }
+      
+      // Hide seller features for buyers
+      if (role === 'buyer') {
+        const sellBtn = document.getElementById("sellBtn");
+        const sellerDashIcon = document.getElementById("sellerDashIcon");
+        if (sellBtn) sellBtn.style.display = "none";
+        if (sellerDashIcon) sellerDashIcon.style.display = "none";
+      }
+    });
+
     function logout() {
       if(confirm("Are you sure you want to logout?")) {
         alert("You have logged out successfully!");

@@ -25,10 +25,10 @@ const upload = multer({ storage });
 
 // ------------------- SIGNUP -------------------
 router.post("/signup", upload.single("profile_image"), async (req, res) => {
-  const { fullname, email, password, phone, address } = req.body;
+  const { fullname, email, password, phone, address, role } = req.body;
 
-  if (!fullname || !email || !password) {
-    return res.status(400).json({ message: "Fullname, email, and password are required" });
+  if (!fullname || !email || !password || !role) {
+    return res.status(400).json({ message: "Fullname, email, password, and role are required" });
   }
 
   try {
@@ -41,8 +41,8 @@ router.post("/signup", upload.single("profile_image"), async (req, res) => {
     const profileImagePath = req.file ? `/uploads/profiles/${req.file.filename}` : null;
 
     const [result] = await db.query(
-      "INSERT INTO users (fullname, email, password, phone, address, profile_image) VALUES (?, ?, ?, ?, ?, ?)",
-      [fullname, email, hashedPassword, phone || null, address || null, profileImagePath]
+      "INSERT INTO users (fullname, email, password, phone, address, profile_image, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [fullname, email, hashedPassword, phone || null, address || null, profileImagePath, role]
     );
 
     const token = jwt.sign({ id: result.insertId, email }, SECRET_KEY, { expiresIn: "7d" });
@@ -56,6 +56,7 @@ router.post("/signup", upload.single("profile_image"), async (req, res) => {
         email,
         phone: phone || null,
         address: address || null,
+        role,
         profile_image: profileImagePath ? `http://127.0.0.1:5000${profileImagePath}` : null,
       },
     });
@@ -90,6 +91,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         phone: user.phone || null,
         address: user.address || null,
+        role: user.role || 'buyer',
         profile_image: user.profile_image ? `http://127.0.0.1:5000${user.profile_image}` : null,
       },
     });

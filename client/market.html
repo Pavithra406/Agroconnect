@@ -4,299 +4,483 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgroConnect - Market Prices</title>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* 🌿 Global */
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
-    background: url('https://cdn.pixabay.com/photo/2024/03/22/09/05/farm-8649277_1280.jpg') no-repeat center center/cover;
+    background:
+      linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+      url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1600&auto=format&fit=crop') no-repeat center center / cover;
+    background-attachment: fixed;
     color: #333;
-    position: relative;
+    min-height: 100vh;
   }
 
-  /* ===== HEADER ===== */
-  header {
-    position: relative;
-    z-index: 1;
+  /* NAVBAR */
+  .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255,255,255,0.95);
-    padding: 12px 30px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    border-radius: 10px;
-    margin: 20px auto;
-    max-width: 1200px;
+    background: #2e7d32;
+    padding: 14px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   }
 
   .logo-section {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
   .logo-section img {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
+    object-fit: cover;
   }
 
-  .logo-section h1 {
-    font-size: 22px;
-    color: #2e7d32;
+  .logo-section span {
+    font-size: 1.3rem;
     font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .nav-right i {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+
+  .nav-right i:hover { opacity: 1; }
+
+  .logout-btn {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 7px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+
+  .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #2e7d32, #43a047);
+    color: #fff;
+    text-align: center;
+    padding: 40px 20px 30px;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    max-width: 520px;
+    margin: 28px auto 0;
+    display: flex;
+    background: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  }
+
+  .search-wrap input {
+    flex: 1;
+    padding: 13px 20px;
+    border: none;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    color: #333;
+  }
+
+  .search-wrap button {
+    background: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 13px 22px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+
+  .search-wrap button:hover { background: #1b5e20; }
+
+  /* CONTENT */
+  .content {
+    max-width: 1200px;
+    margin: 30px auto 50px;
+    padding: 20px 20px 30px;
+    background: rgba(240,244,240,0.88);
+    border-radius: 16px;
+  }
+
+  .results-info {
+    font-size: 0.88rem;
+    color: #666;
+    margin-bottom: 16px;
+  }
+
+  /* GRID */
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 22px;
+  }
+
+  /* CARD */
+  .market-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .market-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #2e7d32, #388e3c);
+    color: #fff;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .nav-icons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .nav-icons i {
-    font-size: 20px;
-    cursor: pointer;
-    color: #2e7d32;
-    transition: 0.3s;
-  }
-
-  .nav-icons i:hover {
-    color: #1b5e20;
-    transform: scale(1.1);
-  }
-
-  .logout-btn {
-    background: #2e7d32;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
-  }
-
-  .logout-btn:hover {
-    background: #1b5e20;
-  }
-
-  /* ===== PAGE CONTENT ===== */
-  .content {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 20px auto 40px;
-    padding: 20px;
-  }
-
-  .search-container {
-    max-width: 500px;
-    margin: 20px auto;
-    display: flex;
-    align-items: center;
-    background: #fff;
-    border-radius: 40px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-
-  .search-container input {
-    flex: 1;
-    padding: 12px 18px;
-    border: none;
-    font-size: 1rem;
-    outline: none;
-  }
-
-  .search-container button {
-    background: #2e7d32;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  .search-container button:hover { background: #1b5e20; }
-
-  .market-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-
-  .market-card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 16px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .market-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-  }
-
-  .market-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #d6e8d8;
-    padding-bottom: 8px;
-    margin-bottom: 10px;
-  }
-
-  .market-header h2 {
-    font-size: 1.2em;
-    color: #1b5e20;
-  }
-
-  .market-header span {
-    background: #c8e6c9;
+  .district-badge {
+    background: rgba(255,255,255,0.2);
     padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.9em;
-    color: #2e7d32;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-download {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-download:hover { background: rgba(255,255,255,0.32); }
+
+  .card-body {
+    padding: 0;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95em;
+    font-size: 0.88rem;
   }
 
-  th, td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #eef3ee;
+  thead tr {
+    background: #f1f8f2;
   }
 
   th {
-    background: #f1f8f4;
+    padding: 9px 12px;
+    text-align: left;
     color: #2e7d32;
     font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid #e0ede0;
   }
 
-  tr:hover td {
-    background: #f9fff9;
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #f0f4f0;
+    color: #444;
   }
 
-  .refresh-note {
+  tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover td { background: #f7fbf7; }
+
+  .price-modal {
+    font-weight: 600;
+    color: #2e7d32;
+  }
+
+  .price-min { color: #e65100; }
+  .price-max { color: #1565c0; }
+
+  .no-data {
+    padding: 16px;
     text-align: center;
-    margin-top: 25px;
-    font-size: 0.9em;
-    color: #4e6e50;
+    color: #999;
+    font-size: 0.88rem;
   }
 
-  @media (max-width: 500px) {
-    .logo-section h1 { font-size: 1.6em; }
-    .market-card { padding: 15px; }
+  /* STATES */
+  .state-msg {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 1rem;
+  }
+
+  .state-msg i {
+    font-size: 2.5rem;
+    color: #ccc;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e0ede0;
+    border-top-color: #2e7d32;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 14px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.82rem;
+    color: #888;
+  }
+
+  @media (max-width: 600px) {
+    .navbar { padding: 12px 18px; }
+    .hero h1 { font-size: 1.4rem; }
+    .market-grid { grid-template-columns: 1fr; }
+    th, td { padding: 7px 9px; }
   }
 </style>
 </head>
 <body>
 
-<header>
+<!-- NAVBAR -->
+<nav class="navbar">
   <div class="logo-section">
-    <img src="logo.png" alt="Logo">
-    <h1> AgroConnect</h1>
+    <img src="logo.png" alt="AgroConnect Logo">
+    <span>AgroConnect</span>
   </div>
-  <div class="nav-icons">
-    <i class="fas fa-home" title="Home" onclick="goToPage('home.html')"></i>
-    <button class="logout-btn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+  <div class="nav-right">
+    <i class="fas fa-home" title="Home" onclick="location.href='home.html'"></i>
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-right-from-bracket"></i> Logout
+    </button>
   </div>
-</header>
+</nav>
 
+<!-- HERO -->
+<div class="hero">
+  <h1><i class="fas fa-chart-line"></i> Tamil Nadu Market Prices</h1>
+  <p>Live commodity prices from mandis across Tamil Nadu</p>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Search by district or market name..." />
+    <button onclick="loadMarkets()"><i class="fas fa-search"></i></button>
+  </div>
+</div>
+
+<!-- CONTENT -->
 <div class="content">
-  <div class="search-container">
-    <input type="text" id="search" placeholder="Search by district or market..." />
-    <button onclick="loadMarkets()"><i class="fa fa-search"></i></button>
-  </div>
-
-  <div id="market-container" class="market-container"></div>
-
-  <p class="refresh-note">
-    🔄 Data auto-refreshes daily at 4 AM · Powered by AgroConnect
+  <div id="results-info" class="results-info"></div>
+  <div id="market-grid" class="market-grid"></div>
+  <p class="footer-note">
+    <i class="fas fa-rotate"></i> Data refreshed daily · Source: data.gov.in · Powered by AgroConnect
   </p>
 </div>
 
 <script>
-function goToPage(page) { window.location.href = page; }
-function logout() { localStorage.clear(); window.location.href = "login.html"; }
+  function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-const API_URL = "http://127.0.0.1:5000/api/markets/tn";
+  const API_URL = "http://127.0.0.1:5000/api/markets/tn";
 
-async function loadMarkets() {
-  const search = document.getElementById("search").value.toLowerCase();
-  const container = document.getElementById("market-container");
-  container.innerHTML = "<p>Loading market data...</p>";
-
-  try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error("Network response not ok");
-    const data = await res.json();
-    container.innerHTML = "";
-
-    let filtered = data.filter(item =>
-      item.market.district.toLowerCase().includes(search) ||
-      item.market.market_name.toLowerCase().includes(search)
-    );
-
-    if (filtered.length === 0) {
-      container.innerHTML = `<p>No markets found for "${search}".</p>`;
-      return;
-    }
-
-    filtered.forEach(m => {
-      const card = document.createElement("div");
-      card.className = "market-card";
-
-      card.innerHTML = `
-        <div class="market-header">
-          <h2><i class="fa-solid fa-store"></i> ${m.market.market_name}</h2>
-          <span>${m.market.district}</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Commodity</th>
-              <th>Variety</th>
-              <th>Min</th>
-              <th>Modal</th>
-              <th>Max</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${m.prices.map(p => `
-              <tr>
-                <td>${p.commodity}</td>
-                <td>${p.variety}</td>
-                <td>${p.min_price}</td>
-                <td>${p.modal_price}</td>
-                <td>${p.max_price}</td>
-              </tr>`).join("")}
-          </tbody>
-        </table>
-      `;
-
-      container.appendChild(card);
-    });
-  } catch (err) {
-    console.error("Error loading markets:", err);
-    container.innerHTML = `<p style="color:red;">Error loading data. Please try again later.</p>`;
+  function fmt(val) {
+    const n = parseFloat(val);
+    return isNaN(n) ? "—" : "₹" + n.toLocaleString("en-IN");
   }
-}
 
-// Load markets on page load
-loadMarkets();
+  function renderCard(m) {
+    const rows = m.prices.length === 0
+      ? `<tr><td colspan="5" class="no-data">No price data available</td></tr>`
+      : m.prices.map(p => `
+          <tr>
+            <td>${p.commodity}</td>
+            <td>${p.variety || "—"}</td>
+            <td class="price-min">${fmt(p.min_price)}</td>
+            <td class="price-modal">${fmt(p.modal_price)}</td>
+            <td class="price-max">${fmt(p.max_price)}</td>
+          </tr>`).join("");
+
+    const id = `market-${m.market.market_name.replace(/\s+/g,'_')}`;
+
+    return `
+      <div class="market-card">
+        <div class="card-header">
+          <h2><i class="fas fa-store"></i> ${m.market.market_name}</h2>
+          <div class="header-right">
+            <span class="district-badge">${m.market.district}</span>
+            <button class="btn-download" onclick="downloadCSV('${id}', '${m.market.market_name}', '${m.market.district}')">
+              <i class="fas fa-download"></i> CSV
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <table id="${id}">
+            <thead>
+              <tr>
+                <th>Commodity</th>
+                <th>Variety</th>
+                <th>Min</th>
+                <th>Modal</th>
+                <th>Max</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  function downloadCSV(tableId, marketName, district) {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+
+    const rows = [];
+    rows.push(['Market', 'District', 'Commodity', 'Variety', 'Min Price', 'Modal Price', 'Max Price']);
+
+    const trs = table.querySelectorAll('tbody tr');
+    trs.forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      if (cells.length < 5) return;
+      rows.push([
+        marketName,
+        district,
+        cells[0].textContent.trim(),
+        cells[1].textContent.trim(),
+        cells[2].textContent.trim(),
+        cells[3].textContent.trim(),
+        cells[4].textContent.trim()
+      ]);
+    });
+
+    const csv = rows.map(r => r.map(c => `"${c.replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${district}_${marketName}_prices.csv`.replace(/\s+/g,'_');
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function loadMarkets() {
+    const search = document.getElementById("search").value.trim().toLowerCase();
+    const grid = document.getElementById("market-grid");
+    const info = document.getElementById("results-info");
+
+    grid.innerHTML = `
+      <div class="state-msg" style="grid-column:1/-1">
+        <div class="spinner"></div>
+        <p>Loading market data...</p>
+      </div>`;
+    info.textContent = "";
+
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Server error");
+      const data = await res.json();
+
+      const filtered = search
+        ? data.filter(m =>
+            m.market.district.toLowerCase().includes(search) ||
+            m.market.market_name.toLowerCase().includes(search))
+        : data;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="state-msg" style="grid-column:1/-1">
+            <i class="fas fa-magnifying-glass"></i>
+            <p>No markets found for "<strong>${search}</strong>"</p>
+          </div>`;
+        info.textContent = "";
+        return;
+      }
+
+      info.textContent = `Showing ${filtered.length} market${filtered.length !== 1 ? "s" : ""}${search ? ` for "${search}"` : ""}`;
+      grid.innerHTML = filtered.map(renderCard).join("");
+
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = `
+        <div class="state-msg" style="grid-column:1/-1">
+          <i class="fas fa-triangle-exclamation" style="color:#e65100"></i>
+          <p>Failed to load market data. Please try again later.</p>
+        </div>`;
+    }
+  }
+
+  document.getElementById("search").addEventListener("keydown", e => {
+    if (e.key === "Enter") loadMarkets();
+  });
+
+  loadMarkets();
 </script>
-
 </body>
 </html>
